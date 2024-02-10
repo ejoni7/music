@@ -1,0 +1,65 @@
+{% extends 'home/master.html' %}
+{% load static %}
+{% load mathfilters %}
+<!--# TITLE-->
+{% block title %}
+اهنگدان | خانه
+{% endblock  %}
+<!--#HEAD-->
+{% block head %}
+<link rel="stylesheet" href="{% static 'home/paginator.css' %}">
+{% endblock  %}
+<!--# BODY-->
+{% block body %}
+<br><br>
+<!--{{songs}}-->
+<h1>songs</h1>
+{%for song in queries %}
+<a href="{{ song.get_absolute_url }}"><p>{{song.title}}</p></a>
+
+<p>{{song.song_image}}: <img src="{{ song.song_image.url }}" alt="{{song.title}}عکس اهنگ"></p>
+
+<audio controls preload="none">
+    <source {% src="{{ MEDIA_URL }}{{song.song}}" type="audio/mpeg" download="filename.mp3">
+</audio><br>
+
+
+<p>id:{{song.id}}</p>
+<p>title:{{song.title}}</p>
+<p>text:{{song.text |safe}}</p>
+<p>singers:</p>
+{% for singer in song.singer.all%}
+ <p>{{singer.name}}</p>
+{% endfor %}
+
+<br>
+
+
+{% endfor %}
+{% endblock  %}
+<!--# NAVBAR-->
+{% block navbar %}
+<a href="{% url 'accounts:profile'%}">پروفایل</a>
+<br>
+{% endblock  %}
+<!--# FOOTER-->
+{% block footer %}
+<div class="pagination">
+    <a {% if queries.has_previous %} href="{% url 'home:home' queries.previous_page_number %}" {% else%} disabled
+       {% endif %}>&laquo;</a>
+
+    {% for num in page.page_range %}
+    {% if page_num|sub:num > 2 %}<a disabled>...</a>
+    {% elif page_num|sub:num|abs <= 2 %}
+    <a href="{% url 'home:home' num %}" {% if num == page_num %} class="active" {% endif %}>{{num}}</a>
+    {% else %}
+    <a disabled>...</a>
+    {% endif%}
+
+    {% endfor %}
+
+    <a {% if queries.has_next %} href="{% url 'home:home' queries.next_page_number %}" {% else%} disabled {% endif %}>&raquo;</a>
+
+
+</div>
+{% endblock  %}

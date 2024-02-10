@@ -1,0 +1,110 @@
+{% extends 'home/master.html' %}
+{% load static %}
+<!--# TITLE-->
+{% block title %}
+اهنگ
+{% endblock  %}
+<!--#HEAD-->
+{% block head %}
+
+  <script src="{% static 'home/captcha.js' %}"></script>
+
+{% endblock  %}
+<!--# BODY-->
+{% block body %}
+<!-- //__________________________________________________________________________________-->
+<!-- اهنگهای مرتبط       -->
+<!-- //__________________________________________________________________________________-->
+{% for relateds in related_songs %}
+  {% for related in relateds %}
+
+<br><hr><br>
+<a href="{% url 'home:song' related.slug related.id %}">
+    <img src="{{related.song_image.url}}" alt="{{song.slug}}  اهنگهای مشابه"></a>
+<br><hr><br>
+
+
+{%  endfor %}
+
+{%  endfor %}
+
+
+
+<!-- //__________________________________________________________________________________-->
+<!--  پخش mp3  و دانلود اهنگ     -->
+<!-- //__________________________________________________________________________________-->
+<h1>player</h1>
+<audio controls preload="none"  >
+  <source src="{{ MEDIA_URL }}{{song.song}}" type="audio/mpeg" download="filename.mp3" >
+</audio><br>
+<!--<a href="{{ MEDIA_URL }}{{song.song}}" download="filename.mp3">دانلود اهنگ {{song.title}}</a>-->
+<!-- //__________________________________________________________________________________-->
+<!--توضیحات و لینک دانلود اهنگ--->
+<!-- //__________________________________________________________________________________-->
+<h1>detail</h1>
+<p>song title:{{song.title}}</p>
+<p>update:{{song.created}}</p>
+<p>assumed chord:{{song.assumed_chord}}</p>
+<p> details :{{song.text |safe}}</p>
+ccc
+<p>singers</p>
+{% for singer in song.singer.all %}
+<p>{{singer.name}}</p>
+{% endfor %}
+<p>views of page :{{song.view}}</p>
+<!-- //__________________________________________________________________________________-->
+<!--ارسال ویدیو           -->
+<!-- //__________________________________________________________________________________-->
+<hr>
+<hr>
+<h1>ارسال ویدیو           </h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p}}
+    <button type="submit"> ارسال ویدیو</button>
+    <button class="js-captcha-refresh"><span class="material-symbols-outlined"></span></button>
+</form>
+
+
+<br><br>
+
+<!-- //__________________________________________________________________________________-->
+<!--       لیست  اهنگهای جانبی                -->
+<!-- //__________________________________________________________________________________-->
+<!---->
+<hr>
+{% for sub in sub_songs%}
+<p> ارسالی توسط{{sub.user}}</p>
+
+<!--<video width='400' controls>-->
+<!--    <source src='{{ MEDIA_URL }}{{ sub.video }}' type='video/mp4'>-->
+<!--    Your browser does not support the video tag.-->
+<!--</video>-->
+<br><br>
+<p>create: {{sub.created}}</p>
+<p>image: <img src="{{ sub.image_sub.url }}" alt="  اجرا شده توسط }}{{sub.user}}{{song.title}}عکس اهنگ"></p>`
+<!--پخش کردن ویدیو با javascript sub.id -->
+<p> video like :{{sub.get_total_like}}</p>
+{% if  user.is_authenticated %}
+<a href="{% url 'home:like_sub' sub.id %}">like</a>
+
+{% endif %}
+<br>
+{% endfor%}
+
+
+{% endblock %}
+
+<!--    # NAVBAR-->
+{% block navbar %}
+<a href="{% url 'accounts:profile'%}">پروفایل</a><br>
+{% endblock %}
+<!--    # FOOTER-->
+{% block footer %}
+{% endblock %}
+{% block scripts %}
+
+<script>'undefined' === typeof _trfq || (window._trfq = []);
+'undefined' === typeof _trfd && (window._trfd = []), _trfd.push({'tccl.baseHost': 'secureserver.net'}, {'ap': 'cpbh-mt'}, {'server': 'p3plmcpnl487010'}, {'dcenter': 'p3'}, {'cp_id': '8437534'}, {'cp_cache': ''}, {'cp_cl': '6'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script>
+<script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script>
+{% endblock %}
